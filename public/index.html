@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MERMAID CONVERTER</title>
+
+  <!-- Dynamic Theme Loading -->
+  <link rel="stylesheet" id="theme-stylesheet" href="/themes/default.css">
+
+  <style>
+    /* Base styles that apply to all themes */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Floating Upload Widget */
+    .floating-upload {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      z-index: 9998;
+      background: white;
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      transform: translateY(-20px) scale(0.9);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 2px solid #666;
+    }
+
+    .floating-upload.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    .floating-upload:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .floating-upload.dragover {
+      border-color: #000;
+      background: #f0f0f0;
+      transform: scale(1.05);
+    }
+
+    .floating-upload-icon {
+      font-size: 1.5rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .floating-upload-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Keep upload section always visible - no hiding */
+    .converter {
+      transition: all 0.3s ease;
+    }
+
+    /* Smooth preview expansion */
+    .preview {
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Theme Selector -->
+  <div class="theme-selector">
+    <span style="font-weight: 900; margin-right: 6px; font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.5px;">THEME:</span>
+    <button class="theme-btn active" data-theme="default">DEFAULT</button>
+    <button class="theme-btn" data-theme="spring">SPRING</button>
+  </div>
+
+  <!-- Floating Upload Widget (appears after first upload) -->
+  <div class="floating-upload" id="floatingUpload">
+    <div class="floating-upload-icon">📄</div>
+    <div class="floating-upload-text">Drop file here</div>
+  </div>
+
+  <!-- HTML Download Button -->
+  <button class="download-html-btn" id="downloadHtmlBtn" disabled>
+    ⬇ HTML
+  </button>
+
+  <div class="container">
+    <div class="header">
+      <h1>MERMAID CONVERTER</h1>
+      <p>Markdown + Mermaid → Beautiful HTML</p>
+    </div>
+
+    <div class="converter">
+      <div class="section">
+        <h2 class="section-title">📁 UPLOAD FILE</h2>
+
+        <div class="file-upload">
+          <input type="file" id="fileInput" accept=".md" class="file-input">
+          <div id="uploadArea" class="upload-area">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">
+              <strong>Drop your .MD file here</strong>
+              or click to select
+            </div>
+          </div>
+          <div id="fileInfo" style="display: none;"></div>
+        </div>
+
+        <div id="uploadMessage" class="message" style="display: none;"></div>
+      </div>
+    </div>
+
+    <div class="preview">
+      <h2 class="section-title">👁️ PREVIEW</h2>
+      <div id="preview">
+        <div class="preview-placeholder">
+          <div class="preview-placeholder-icon">📝</div>
+          <p>Waiting for markdown file...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme Management
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    const themeStylesheet = document.getElementById('theme-stylesheet');
+    const body = document.body;
+
+    // Load saved theme or default
+    let currentTheme = localStorage.getItem('preferred-theme') || 'default';
+    loadTheme(currentTheme);
+
+    themeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theme = btn.getAttribute('data-theme');
+        loadTheme(theme);
+
+        // Update active button
+        themeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Save preference
+        localStorage.setItem('preferred-theme', theme);
+      });
+    });
+
+    function loadTheme(theme) {
+      currentTheme = theme;
+      themeStylesheet.href = `/themes/${theme}.css`;
+      body.setAttribute('data-theme', theme);
+
+      // Update active button
+      themeButtons.forEach(btn => {
+        if (btn.getAttribute('data-theme') === theme) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // File Upload Management
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInfo = document.getElementById('fileInfo');
+    const preview = document.getElementById('preview');
+    const uploadMessage = document.getElementById('uploadMessage');
+    const downloadHtmlBtn = document.getElementById('downloadHtmlBtn');
+    const floatingUpload = document.getElementById('floatingUpload');
+    const converterSection = document.querySelector('.converter');
+
+    let selectedFile = null;
+    let currentHtmlContent = null;
+    let currentFilename = 'preview';
+
+    // Intersection Observer to show/hide floating upload based on scroll
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Upload section is visible - hide floating widget
+          floatingUpload.classList.remove('show');
+        } else {
+          // Upload section is out of view - show floating widget
+          floatingUpload.classList.add('show');
+        }
+      });
+    }, observerOptions);
+
+    // Start observing the upload section
+    observer.observe(converterSection);
+
+    // Helper function to setup drag and drop
+    function setupDragAndDrop(element) {
+      element.addEventListener('click', () => fileInput.click());
+      element.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        element.classList.add('dragover');
+      });
+      element.addEventListener('dragleave', () => {
+        element.classList.remove('dragover');
+      });
+      element.addEventListener('drop', (e) => {
+        e.preventDefault();
+        element.classList.remove('dragover');
+        handleFileSelect(e.dataTransfer.files[0]);
+      });
+    }
+
+    // Setup drag and drop for both upload areas
+    setupDragAndDrop(uploadArea);
+    setupDragAndDrop(floatingUpload);
+
+    // File selection - AUTO CONVERT
+    fileInput.addEventListener('change', (e) => {
+      handleFileSelect(e.target.files[0]);
+    });
+
+    async function handleFileSelect(file) {
+      if (!file) return;
+
+      if (!file.name.endsWith('.md')) {
+        showMessage(uploadMessage, 'ERROR: .MD FILES ONLY', 'error');
+        return;
+      }
+
+      selectedFile = file;
+      fileInfo.style.display = 'block';
+      fileInfo.className = 'file-info';
+      fileInfo.innerHTML = `
+        <strong>FILE: ${file.name}</strong>
+        <strong>SIZE: ${(file.size / 1024).toFixed(2)} KB</strong>
+      `;
+      showMessage(uploadMessage, '', '');
+
+      // AUTO CONVERT
+      await autoConvertFile(file);
+    }
+
+    async function autoConvertFile(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        showLoading();
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          headers: {
+            'Accept-Charset': 'utf-8'
+          },
+          body: formData
+        });
+
+        const text = await response.text();
+        const data = JSON.parse(text);
+
+        if (data.success) {
+          showPreview(data.html);
+          currentFilename = data.filename.replace(/\.md$/i, '');
+          showMessage(uploadMessage, `CONVERTED: ${data.filename}`, 'success');
+        } else {
+          throw new Error(data.error || 'CONVERSION FAILED');
+        }
+      } catch (error) {
+        showMessage(uploadMessage, `ERROR: ${error.message}`, 'error');
+        showPlaceholder();
+      }
+    }
+
+    // HTML Download functionality
+    downloadHtmlBtn.addEventListener('click', () => {
+      if (!currentHtmlContent) return;
+
+      const previewContent = document.querySelector('.preview-content');
+      if (!previewContent) return;
+
+      // Generate HTML based on current theme
+      const htmlDocument = currentTheme === 'spring'
+        ? generateSpringHtml(previewContent.innerHTML)
+        : generateDefaultHtml(previewContent.innerHTML);
+
+      // Create blob and download
+      const blob = new Blob([htmlDocument], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentFilename}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    function generateDefaultHtml(content) {
+      return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${currentFilename}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Courier New', monospace;
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #ffffff;
+      color: #000000;
+      line-height: 1.4;
+    }
+    .preview-content {
+      border: 4px solid #000000;
+      padding: 30px;
+      background: #ffffff;
+    }
+    .preview-content h1, .preview-content h2, .preview-content h3, .preview-content h4 {
+      font-weight: 900; text-transform: uppercase; letter-spacing: -1px;
+      margin-top: 30px; margin-bottom: 15px;
+      border-bottom: 4px solid #000000; padding-bottom: 10px;
+    }
+    .preview-content h1 { font-size: 2.5rem; }
+    .preview-content h2 { font-size: 2rem; }
+    .preview-content h3 { font-size: 1.5rem; }
+    .preview-content h4 { font-size: 1.2rem; }
+    .preview-content p { margin: 20px 0; line-height: 1.6; }
+    .preview-content ul, .preview-content ol { margin: 20px 0; padding-left: 40px; }
+    .preview-content li { margin: 10px 0; font-weight: 500; }
+    .preview-content table {
+      width: 100%; border-collapse: collapse; margin: 20px 0;
+      border: 1px solid #888888; background: #ffffff;
+    }
+    .preview-content th, .preview-content td {
+      border: 1px solid #888888; padding: 15px; text-align: left;
+      font-family: 'Courier New', monospace;
+    }
+    .preview-content th {
+      background: #000000; color: #ffffff; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .preview-content td { background: #ffffff; font-weight: 500; }
+    .preview-content tr:nth-child(even) td { background: #cccccc; }
+    .preview-content code {
+      background: #cccccc; padding: 4px 8px; border: 1px solid #888888;
+      font-family: 'Courier New', monospace; font-weight: 700;
+    }
+    .preview-content pre {
+      background: #cccccc; border: 1px solid #888888; padding: 20px;
+      overflow-x: auto; margin: 20px 0;
+      font-family: 'Courier New', monospace; line-height: 1.4;
+    }
+    .preview-content pre code { border: none; padding: 0; background: transparent; }
+    .preview-content a { color: #000000; text-decoration: underline; font-weight: 900; }
+    .preview-content a:hover { background: #000000; color: #ffffff; }
+    .preview-content svg {
+      max-width: 100%; height: auto; margin: 30px 0;
+      border: 1px solid #888888; padding: 20px; background: #ffffff; display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-content">
+${content}
+  </div>
+</body>
+</html>`;
+    }
+
+    function generateSpringHtml(content) {
+      return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${currentFilename}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 40px; max-width: 1200px; margin: 0 auto;
+      background: #f5f5f5; color: #282c34; line-height: 1.9rem;
+    }
+    .preview-content { max-width: 90%; margin: 0 auto; }
+    .preview-content h1, .preview-content h2, .preview-content h3, .preview-content h4 {
+      margin-top: 2rem; margin-bottom: 1rem; font-weight: 700;
+    }
+    .preview-content h1 { font-size: 2.4rem; }
+    .preview-content h2 {
+      font-size: 2rem; position: relative; padding-bottom: 0.5rem;
+    }
+    .preview-content h2::after {
+      content: ""; display: block; width: 30rem; max-width: 100%;
+      height: 2.5px; margin: 0.5rem 0 0;
+      background: linear-gradient(90deg, rgba(106, 158, 69, 0), #3ea174, rgba(106, 158, 69, 0));
+      border-radius: 10px;
+    }
+    .preview-content h3 { font-size: 1.8rem; }
+    .preview-content h4 { font-size: 1.5rem; }
+    .preview-content p { margin: 1rem 0; padding: 0 0.3rem; line-height: 1.9rem; }
+    .preview-content ul, .preview-content ol { margin: 0.5rem 0; padding-left: 2.8rem; }
+    .preview-content li { font-size: 1rem; line-height: 1.5rem; margin: 0.3rem 0; }
+    .preview-content blockquote {
+      padding: 0.5rem 1rem; border-left: 8px solid #2f845e;
+      background-color: #e8f4eb; border-radius: 7px; margin: 1.5rem 0;
+    }
+    .preview-content hr {
+      margin: 2rem 0; border: none; height: 2px;
+      background-image: linear-gradient(90deg, #5ea67c, #2f845e, #5ea67c);
+      border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); opacity: 0.8;
+    }
+    .preview-content table {
+      width: 100%; border-collapse: separate; margin: 1.5rem 0;
+      border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;
+    }
+    .preview-content th, .preview-content td {
+      padding: 10px 16px; border: 0.5px solid #e0e0e0; text-align: left;
+    }
+    .preview-content th {
+      background-color: #eff5f2; color: #06621e; font-weight: 600;
+    }
+    .preview-content td { background: #ffffff; }
+    .preview-content tbody tr:nth-child(even) td { background-color: #fafafa; }
+    .preview-content code {
+      background-color: rgba(221, 235, 213, 0.5); color: #359d09;
+      font-weight: 550; border-radius: 7px; padding: 3px 6px;
+    }
+    .preview-content pre {
+      background-color: #fff; color: #2f4f4f; padding: 17px; padding-top: 32px;
+      border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      margin: 1.5rem 0; overflow-x: auto; line-height: 1.4;
+    }
+    .preview-content pre code {
+      background: transparent; padding: 0; border: none;
+      font-weight: normal; color: inherit;
+    }
+    .preview-content strong { color: #06621e; font-size: 1.05rem; font-weight: bold; }
+    .preview-content u {
+      text-decoration: none; border-bottom: 2px solid rgb(9, 156, 70); padding-bottom: 2px;
+    }
+    .preview-content mark {
+      background-color: #aee6c3; padding: 3px 6px; border-radius: 4px;
+    }
+    .preview-content a { color: #0c8f94; text-decoration: none; transition: color 0.3s; }
+    .preview-content a:hover { color: #02502a; text-decoration: underline; }
+    .preview-content img {
+      max-width: 100%; height: auto; margin: 1.5rem auto;
+      display: block; border-radius: 10px;
+    }
+    .preview-content svg {
+      max-width: 100%; height: auto; margin: 2rem auto; display: block;
+      border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 20px; background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-content">
+${content}
+  </div>
+</body>
+</html>`;
+    }
+
+    function showLoading() {
+      preview.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Converting markdown...</p>
+        </div>
+      `;
+    }
+
+    function showPlaceholder() {
+      preview.innerHTML = `
+        <div class="preview-placeholder">
+          <div class="preview-placeholder-icon">📝</div>
+          <p>Waiting for markdown file...</p>
+        </div>
+      `;
+      currentHtmlContent = null;
+      downloadHtmlBtn.disabled = true;
+    }
+
+    function showPreview(html) {
+      preview.innerHTML = `<div class="preview-content">${html}</div>`;
+      currentHtmlContent = html;
+      downloadHtmlBtn.disabled = false;
+    }
+
+    function showMessage(element, message, type) {
+      if (!message) {
+        element.style.display = 'none';
+        element.innerHTML = '';
+        return;
+      }
+      element.style.display = 'block';
+      element.className = `message ${type}`;
+      element.innerHTML = message;
+    }
+  </script>
+</body>
+</html>

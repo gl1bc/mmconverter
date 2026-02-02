@@ -1,0 +1,31 @@
+{
+  "name": "mermaid-markdown-converter",
+  "version": "1.0.0",
+  "description": "Convert Markdown with Mermaid diagrams to HTML",
+  "type": "module",
+  "main": "mermaid-converter.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "convert": "node mermaid-converter.js"
+  },
+  "keywords": [
+    "mermaid",
+    "markdown",
+    "unified",
+    "remark",
+    "rehype"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "unified": "^11.0.5",
+    "remark-parse": "^11.0.0",
+    "remark-gfm": "^4.0.0",
+    "remark-rehype": "^11.1.1",
+    "rehype-mermaid": "^2.1.0",
+    "rehype-stringify": "^10.0.1",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}
