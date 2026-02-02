@@ -56,8 +56,6 @@ mmconvert/
 │   └── themes/
 │       ├── default.css    # Brutalism 테마
 │       └── spring.css     # Spring 테마
-├── DOCKER.md              # Docker 배포 가이드
-├── AWS-DEPLOYMENT.md      # AWS ECS 배포 가이드
 └── README.md
 ```
 
