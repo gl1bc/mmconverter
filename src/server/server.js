@@ -12,15 +12,20 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
-const PORT = 3000;
+// Configuration from environment variables
+const PORT = process.env.PORT || 3000;
 
-// Multer 설정 (파일 업로드)
+const app = express();
+
+// Set root directory (two levels up from src/server/)
+const rootDir = path.join(__dirname, '..', '..');
+
+// Multer configuration for file upload
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    // UTF-8 파일명 디코딩
+    // UTF-8 filename decoding
     file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
 
     if (file.mimetype === 'text/markdown' || file.originalname.endsWith('.md')) {
@@ -31,16 +36,16 @@ const upload = multer({
   }
 });
 
-// 정적 파일 제공
-app.use(express.static('public'));
+// Serve static files
+app.use(express.static(path.join(rootDir, 'public')));
 app.use(express.json());
 
-// 기본 경로에서 통합 HTML 제공
+// Serve unified index.html
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Markdown → HTML 변환 함수
+// Markdown → HTML conversion
 async function convertMarkdownToHtml(markdown) {
   const processor = unified()
     .use(remarkParse)
@@ -55,7 +60,7 @@ async function convertMarkdownToHtml(markdown) {
   return String(file);
 }
 
-// 파일 업로드 엔드포인트
+// File upload endpoint
 app.post('/api/upload', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -80,10 +85,8 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-
 app.listen(PORT, () => {
   console.log(`🎨 Mermaid Converter running at http://localhost:${PORT}`);
   console.log(`📝 Open http://localhost:${PORT} in your browser`);
-  console.log(`🔄 Switch between Default and Spring themes!`);
-  console.log(`💡 Theme files: /themes/default.css, /themes/spring.css`);
+  console.log(`💡 Themes: Switch between Default and Spring in browser`);
 });

@@ -39,23 +39,28 @@ PORT=8080 npm start
 npm run convert input.md output.html
 
 # 직접 실행
-node mermaid-converter.js input.md output.html
+node src/cli/mermaid-converter.js input.md output.html
 ```
 
 ## 프로젝트 구조
 
 ```
 mmconvert/
-├── server.js              # 통합 Express 서버
-├── mermaid-converter.js   # CLI 변환 도구
-├── package.json           # 의존성 및 스크립트
-├── Dockerfile             # Docker 이미지 빌드 설정
-├── .dockerignore          # Docker 빌드 제외 파일
-├── public/
+├── src/
+│   ├── server/            # Express 서버 파일들
+│   │   ├── server.js      # 통합 서버 (메인)
+│   │   ├── server-spring.js    # Spring 테마 서버
+│   │   └── server-unified.js   # Unified 테마 서버
+│   └── cli/               # CLI 도구
+│       └── mermaid-converter.js  # Markdown → HTML 변환 CLI
+├── public/                # 정적 리소스
 │   ├── index.html         # 통합 HTML (동적 테마 로딩)
 │   └── themes/
 │       ├── default.css    # Brutalism 테마
 │       └── spring.css     # Spring 테마
+├── package.json           # 의존성 및 스크립트
+├── Dockerfile             # Docker 이미지 빌드 설정
+├── .dockerignore          # Docker 빌드 제외 파일
 └── README.md
 ```
 

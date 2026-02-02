@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Convert Markdown with Mermaid diagrams to HTML",
   "type": "module",
-  "main": "mermaid-converter.js",
+  "main": "src/cli/mermaid-converter.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "convert": "node mermaid-converter.js"
+    "start": "node src/server/server.js",
+    "dev": "node src/server/server.js",
+    "convert": "node src/cli/mermaid-converter.js"
   },
   "keywords": [
     "mermaid",

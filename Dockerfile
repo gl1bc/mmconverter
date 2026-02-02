@@ -32,8 +32,7 @@ COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 # Copy application code
 COPY --chown=nodejs:nodejs package*.json ./
-COPY --chown=nodejs:nodejs server.js ./
-COPY --chown=nodejs:nodejs mermaid-converter.js ./
+COPY --chown=nodejs:nodejs src ./src
 COPY --chown=nodejs:nodejs public ./public
 
 # Switch to nodejs user
@@ -57,4 +56,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start server
-CMD ["node", "server.js"]
+CMD ["node", "src/server/server.js"]

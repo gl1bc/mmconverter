@@ -12,17 +12,18 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configuration from environment variables
-const PORT = process.env.PORT || 3000;
-
 const app = express();
+const PORT = 3001;
 
-// Multer configuration for file upload
+// Set root directory (two levels up from src/server/)
+const rootDir = path.join(__dirname, '..', '..');
+
+// Multer 설정 (파일 업로드)
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    // UTF-8 filename decoding
+    // UTF-8 파일명 디코딩
     file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
 
     if (file.mimetype === 'text/markdown' || file.originalname.endsWith('.md')) {
@@ -33,16 +34,16 @@ const upload = multer({
   }
 });
 
-// Serve static files
-app.use(express.static('public'));
+// 정적 파일 제공 - Spring 테마 전용 디렉토리
+app.use(express.static(path.join(rootDir, 'public')));
 app.use(express.json());
 
-// Serve unified index.html
+// 기본 경로에서 통합 HTML 제공
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(rootDir, 'public', 'index.html'));
 });
 
-// Markdown → HTML conversion
+// Markdown → HTML 변환 함수
 async function convertMarkdownToHtml(markdown) {
   const processor = unified()
     .use(remarkParse)
@@ -57,7 +58,7 @@ async function convertMarkdownToHtml(markdown) {
   return String(file);
 }
 
-// File upload endpoint
+// 파일 업로드 엔드포인트
 app.post('/api/upload', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -82,8 +83,10 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
   }
 });
 
+
 app.listen(PORT, () => {
   console.log(`🎨 Mermaid Converter running at http://localhost:${PORT}`);
   console.log(`📝 Open http://localhost:${PORT} in your browser`);
-  console.log(`💡 Themes: Switch between Default and Spring in browser`);
+  console.log(`🔄 Switch between Default and Spring themes!`);
+  console.log(`💡 Theme files: /themes/default.css, /themes/spring.css`);
 });

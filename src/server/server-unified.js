@@ -13,7 +13,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
+
+// Set root directory (two levels up from src/server/)
+const rootDir = path.join(__dirname, '..', '..');
 
 // Multer 설정 (파일 업로드)
 const storage = multer.memoryStorage();
@@ -31,13 +34,13 @@ const upload = multer({
   }
 });
 
-// 정적 파일 제공 - Spring 테마 전용 디렉토리
-app.use(express.static('public'));
+// 정적 파일 제공
+app.use(express.static(path.join(rootDir, 'public')));
 app.use(express.json());
 
 // 기본 경로에서 통합 HTML 제공
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(rootDir, 'public', 'index.html'));
 });
 
 // Markdown → HTML 변환 함수
