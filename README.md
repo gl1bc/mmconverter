@@ -190,31 +190,3 @@ docker push [YOUR-ECR-URL]/mmconverter:latest
 
 **테마 전환**: 브라우저에서 Default/Spring 버튼으로 전환
 
-**자세한 내용**:
-- 로컬 Docker: [DOCKER.md](./DOCKER.md)
-- AWS 배포: [AWS-DEPLOYMENT.md](./AWS-DEPLOYMENT.md)
-
-## 최적화 사항
-
-### 코드 최적화
-- ✅ 서버 파일 통합 (3개 → 1개)
-- ✅ 환경 변수 기반 설정
-- ✅ 중복 이벤트 핸들러 제거
-- ✅ 공통 함수 추출 (`setupDragAndDrop`)
-- ✅ CLI 도구 개선 (인자 기반)
-
-### 파일 정리
-- ✅ `.gitignore` 추가
-- ✅ Legacy 파일 정리 (public/themes/legacy/)
-- ✅ package.json 스크립트 간소화
-
-### Docker 최적화
-- ✅ Multi-stage build (의존성 캐싱)
-- ✅ Debian 베이스 이미지 (Playwright 공식 지원)
-- ✅ 비-root 사용자 실행 (보안)
-- ✅ Health check 포함
-- ✅ Cross-platform build 지원 (ARM64 → AMD64)
-
-## 라이선스
-
-MIT
