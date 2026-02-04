@@ -3,6 +3,7 @@ import multer from 'multer';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import remarkRehype from 'remark-rehype';
 import rehypeMermaid from 'rehype-mermaid';
 import rehypeStringify from 'rehype-stringify';
@@ -50,6 +51,7 @@ async function convertMarkdownToHtml(markdown) {
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
+    .use(remarkBreaks)
     .use(remarkRehype)
     .use(rehypeMermaid, {
       strategy: 'inline-svg',
