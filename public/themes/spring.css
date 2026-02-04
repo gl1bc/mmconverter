@@ -290,7 +290,6 @@ body {
 #preview {
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  word-break: break-all;
   white-space: normal;
 }
 
@@ -393,7 +392,7 @@ body {
   line-height: 1.9rem;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  word-break: break-all;
+  word-break: keep-all;
   white-space: normal;
 }
 
@@ -410,7 +409,7 @@ body {
   font-weight: normal;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  word-break: break-all;
+  word-break: keep-all;
 }
 
 .preview-content blockquote {
@@ -448,7 +447,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  word-break: break-all;
+  word-break: keep-all;
 }
 
 .preview-content th {
@@ -524,7 +523,7 @@ body {
   transition: color 0.3s;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  word-break: break-all;
+  word-break: keep-all;
   display: inline-block;
   max-width: 100%;
 }
@@ -609,7 +608,7 @@ body {
 .preview-content svg foreignObject div {
   display: block;
   text-align: center;
-  line-height: 1.1;
+  line-height: 1.0;
   font-size: 14px;
 }
 
@@ -618,7 +617,7 @@ body {
   content: "";
   margin: 0;
   padding: 0;
-  height: 3px;
+  height: 0;
   line-height: 0;
   font-size: 0;
 }
@@ -626,20 +625,20 @@ body {
 .preview-content svg foreignObject p {
   margin: 0;
   padding: 0;
-  line-height: 1.1;
+  line-height: 1.0;
 }
 
 /* Ensure labels with line breaks are properly rendered */
 .preview-content svg .nodeLabel,
 .preview-content svg .edgeLabel {
-  line-height: 1.1;
+  line-height: 1.0;
 }
 
 .preview-content svg .nodeLabel p,
 .preview-content svg .edgeLabel p {
   margin: 0;
   padding: 0;
-  line-height: 1.1;
+  line-height: 1.0;
 }
 
 .preview-content svg .nodeLabel br,
@@ -648,20 +647,20 @@ body {
   content: "";
   margin: 0;
   padding: 0;
-  height: 3px;
+  height: 0;
   line-height: 0;
   font-size: 0;
 }
 
 /* Support for multi-line text in labels */
 .preview-content svg .label {
-  line-height: 1.1;
+  line-height: 1.0;
 }
 
 .preview-content svg .label p {
   margin: 0;
   padding: 0;
-  line-height: 1.1;
+  line-height: 1.0;
 }
 
 .preview-content svg .label br {
@@ -669,7 +668,7 @@ body {
   content: "";
   margin: 0;
   padding: 0;
-  height: 3px;
+  height: 0;
   line-height: 0;
   font-size: 0;
 }

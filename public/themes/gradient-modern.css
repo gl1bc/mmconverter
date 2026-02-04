@@ -299,7 +299,6 @@ body::before {
   line-height: 1.8;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  word-break: break-all;
 }
 
 .preview-placeholder {
@@ -412,6 +411,44 @@ body::before {
   color: var(--gradient-end);
 }
 
+/* Table Styling */
+.preview-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.preview-content th,
+.preview-content td {
+  border: 1px solid var(--glass-border);
+  padding: 15px;
+  text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.preview-content th {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  color: var(--white);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.preview-content td {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text-primary);
+}
+
+.preview-content tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.95);
+}
+
 /* Mermaid Diagram Styling */
 .preview-content svg {
   max-width: 100%;
@@ -437,7 +474,7 @@ body::before {
 .preview-content svg foreignObject div {
   display: block;
   text-align: center;
-  line-height: 1.1;
+  line-height: 1.0;
   font-size: 14px;
 }
 
@@ -446,37 +483,60 @@ body::before {
   content: "";
   margin: 0;
   padding: 0;
+  height: 0;
   line-height: 0;
+  font-size: 0;
 }
 
 .preview-content svg foreignObject p {
   margin: 0;
   padding: 0;
-  line-height: 1.1;
+  line-height: 1.0;
 }
 
 /* Ensure labels with line breaks are properly rendered */
 .preview-content svg .nodeLabel,
 .preview-content svg .edgeLabel {
-  line-height: 1.1;
+  line-height: 1.0;
 }
 
 .preview-content svg .nodeLabel p,
 .preview-content svg .edgeLabel p {
   margin: 0;
   padding: 0;
-  line-height: 1.1;
+  line-height: 1.0;
+}
+
+.preview-content svg .nodeLabel br,
+.preview-content svg .edgeLabel br {
+  display: block;
+  content: "";
+  margin: 0;
+  padding: 0;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
 }
 
 /* Support for multi-line text in labels */
 .preview-content svg .label {
-  line-height: 1.1;
+  line-height: 1.0;
 }
 
 .preview-content svg .label p {
   margin: 0;
   padding: 0;
-  line-height: 1.1;
+  line-height: 1.0;
+}
+
+.preview-content svg .label br {
+  display: block;
+  content: "";
+  margin: 0;
+  padding: 0;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
 }
 
 /* Download Button - Gradient */

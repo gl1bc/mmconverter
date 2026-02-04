@@ -229,7 +229,6 @@ body {
   line-height: 1.5;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  word-break: break-all;
 }
 
 .preview-placeholder {
@@ -337,6 +336,41 @@ body {
 
 #preview a:hover {
   color: var(--purple-light);
+}
+
+/* Table Styling */
+.preview-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+}
+
+.preview-content th,
+.preview-content td {
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+  text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.preview-content th {
+  background: var(--deep-purple);
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.preview-content td {
+  background: #ffffff;
+  color: var(--text-primary);
+}
+
+.preview-content tr:nth-child(even) td {
+  background: #f9f9f9;
 }
 
 /* Mermaid Diagram Styling - Pure Rendering (No SVG CSS) */
