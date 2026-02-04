@@ -82,9 +82,14 @@
 <body>
   <!-- Theme Selector -->
   <div class="theme-selector">
-    <span style="font-weight: 900; margin-right: 6px; font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.5px;">THEME:</span>
-    <button class="theme-btn active" data-theme="default">DEFAULT</button>
-    <button class="theme-btn" data-theme="spring">SPRING</button>
+    <label for="themeSelect" style="font-weight: 900; margin-right: 8px; font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.5px;">THEME:</label>
+    <select id="themeSelect" class="theme-dropdown">
+      <option value="default">Default (Brutalism)</option>
+      <option value="spring">Spring</option>
+      <option value="dark-presentation">Dark Presentation</option>
+      <option value="minimal-white">Minimal White</option>
+      <option value="gradient-modern">Gradient Modern</option>
+    </select>
   </div>
 
   <!-- Floating Upload Widget (appears after first upload) -->
@@ -137,7 +142,7 @@
 
   <script>
     // Theme Management
-    const themeButtons = document.querySelectorAll('.theme-btn');
+    const themeSelect = document.getElementById('themeSelect');
     const themeStylesheet = document.getElementById('theme-stylesheet');
     const body = document.body;
 
@@ -145,33 +150,20 @@
     let currentTheme = localStorage.getItem('preferred-theme') || 'default';
     loadTheme(currentTheme);
 
-    themeButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const theme = btn.getAttribute('data-theme');
-        loadTheme(theme);
+    // Set select value to current theme
+    themeSelect.value = currentTheme;
 
-        // Update active button
-        themeButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        // Save preference
-        localStorage.setItem('preferred-theme', theme);
-      });
+    themeSelect.addEventListener('change', (e) => {
+      const theme = e.target.value;
+      loadTheme(theme);
+      localStorage.setItem('preferred-theme', theme);
     });
 
     function loadTheme(theme) {
       currentTheme = theme;
       themeStylesheet.href = `/themes/${theme}.css`;
       body.setAttribute('data-theme', theme);
-
-      // Update active button
-      themeButtons.forEach(btn => {
-        if (btn.getAttribute('data-theme') === theme) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
+      themeSelect.value = theme;
     }
 
     // File Upload Management
@@ -296,9 +288,23 @@
       if (!previewContent) return;
 
       // Generate HTML based on current theme
-      const htmlDocument = currentTheme === 'spring'
-        ? generateSpringHtml(previewContent.innerHTML)
-        : generateDefaultHtml(previewContent.innerHTML);
+      let htmlDocument;
+      switch(currentTheme) {
+        case 'spring':
+          htmlDocument = generateSpringHtml(previewContent.innerHTML);
+          break;
+        case 'dark-presentation':
+          htmlDocument = generateDarkPresentationHtml(previewContent.innerHTML);
+          break;
+        case 'minimal-white':
+          htmlDocument = generateMinimalWhiteHtml(previewContent.innerHTML);
+          break;
+        case 'gradient-modern':
+          htmlDocument = generateGradientModernHtml(previewContent.innerHTML);
+          break;
+        default:
+          htmlDocument = generateDefaultHtml(previewContent.innerHTML);
+      }
 
       // Create blob and download
       const blob = new Blob([htmlDocument], { type: 'text/html;charset=utf-8' });
@@ -376,7 +382,22 @@
     .preview-content svg {
       max-width: 100%; height: auto; margin: 30px 0;
       border: 1px solid #888888; padding: 20px; background: #ffffff; display: block;
+      word-wrap: normal; overflow-wrap: normal; word-break: normal; line-height: normal;
     }
+    .preview-content svg foreignObject { overflow: visible; }
+    .preview-content svg foreignObject div {
+      display: block; text-align: center; line-height: 1.1; font-size: 14px;
+    }
+    .preview-content svg foreignObject div br {
+      display: block; content: ""; margin: 0; padding: 0; line-height: 0;
+    }
+    .preview-content svg foreignObject p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .nodeLabel,
+    .preview-content svg .edgeLabel { line-height: 1.1; }
+    .preview-content svg .nodeLabel p,
+    .preview-content svg .edgeLabel p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .label { line-height: 1.1; }
+    .preview-content svg .label p { margin: 0; padding: 0; line-height: 1.1; }
   </style>
 </head>
 <body>
@@ -468,9 +489,537 @@ ${content}
       display: block; border-radius: 10px;
     }
     .preview-content svg {
-      max-width: 100%; height: auto; margin: 2rem auto; display: block;
-      border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      padding: 20px; background: #ffffff;
+      max-width: 100%; height: auto; margin: 30px 0;
+      border: none; padding: 17px; padding-top: 32px; background: #ffffff; display: block;
+      border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      word-wrap: normal; overflow-wrap: normal; word-break: normal; line-height: normal;
+    }
+    .preview-content svg::before {
+      background: #015e19; border-radius: 50%;
+      box-shadow: 20px 0 #068f28, 40px 0 rgb(116, 219, 38);
+      content: ' '; height: 12px; width: 12px; position: absolute;
+      left: 13px; top: 12px; transition: all 0.3s ease;
+    }
+    @keyframes bounce-mermaid {
+      0%, 100% { width: 100%; height: 100%; transform: translate(0, 0); }
+      50% { transform: translate(-3px, -3px); }
+    }
+    .preview-content svg:hover {
+      animation: bounce-mermaid 0.5s ease-in-out;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.20);
+    }
+    .preview-content svg:hover::before {
+      background: #fc625d; box-shadow: 20px 0 #fdbc40, 40px 0 #34c759;
+    }
+    .preview-content svg foreignObject { overflow: visible; }
+    .preview-content svg foreignObject div {
+      display: block; text-align: center; line-height: 1.1; font-size: 14px;
+    }
+    .preview-content svg foreignObject div br {
+      display: block; content: ""; margin: 0; padding: 0; height: 3px; line-height: 0; font-size: 0;
+    }
+    .preview-content svg foreignObject p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .nodeLabel,
+    .preview-content svg .edgeLabel { line-height: 1.1; }
+    .preview-content svg .nodeLabel p,
+    .preview-content svg .edgeLabel p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .nodeLabel br,
+    .preview-content svg .edgeLabel br {
+      display: block; content: ""; margin: 0; padding: 0; height: 3px; line-height: 0; font-size: 0;
+    }
+    .preview-content svg .label { line-height: 1.1; }
+    .preview-content svg .label p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .label br {
+      display: block; content: ""; margin: 0; padding: 0; height: 3px; line-height: 0; font-size: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-content">
+${content}
+  </div>
+</body>
+</html>`;
+    }
+
+    function generateDarkPresentationHtml(content) {
+      return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${currentFilename}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --dark-bg: #0a0e27;
+      --dark-surface: #1a1e3a;
+      --electric-blue: #00d4ff;
+      --neon-cyan: #00ffff;
+      --text-primary: #ffffff;
+      --text-secondary: #a0aec0;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      line-height: 1.8;
+      padding: 60px 40px;
+    }
+    .preview-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 60px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    .preview-content h1 {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 24px;
+      margin-top: 32px;
+      background: linear-gradient(135deg, var(--electric-blue), var(--neon-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .preview-content h2 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      margin-top: 28px;
+      color: var(--electric-blue);
+    }
+    .preview-content h3 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      margin-top: 24px;
+      color: var(--text-primary);
+    }
+    .preview-content p {
+      font-size: 18px;
+      line-height: 1.8;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    .preview-content ul, .preview-content ol {
+      margin-bottom: 20px;
+      padding-left: 32px;
+    }
+    .preview-content li {
+      margin-bottom: 12px;
+      line-height: 1.8;
+    }
+    .preview-content code {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--electric-blue);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      font-size: 16px;
+    }
+    .preview-content pre {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--glass-border);
+      padding: 24px;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 24px 0;
+    }
+    .preview-content pre code {
+      background: transparent;
+      color: var(--text-primary);
+      padding: 0;
+    }
+    .preview-content svg {
+      max-width: 100%; height: auto; margin: 30px 0;
+      border: 1px solid #888888; padding: 20px; background: #ffffff; display: block;
+      word-wrap: normal; overflow-wrap: normal; word-break: normal; line-height: normal;
+    }
+    .preview-content svg foreignObject { overflow: visible; }
+    .preview-content svg foreignObject div {
+      display: block; text-align: center; line-height: 1.1; font-size: 14px;
+    }
+    .preview-content svg foreignObject div br {
+      display: block; content: ""; margin: 0; padding: 0; line-height: 0;
+    }
+    .preview-content svg foreignObject p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .nodeLabel,
+    .preview-content svg .edgeLabel { line-height: 1.1; }
+    .preview-content svg .nodeLabel p,
+    .preview-content svg .edgeLabel p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .label { line-height: 1.1; }
+    .preview-content svg .label p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content blockquote {
+      border-left: 4px solid var(--electric-blue);
+      padding-left: 20px;
+      margin: 24px 0;
+      color: var(--text-secondary);
+    }
+    .preview-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+    }
+    .preview-content th, .preview-content td {
+      padding: 12px;
+      border: 1px solid var(--glass-border);
+      text-align: left;
+    }
+    .preview-content th {
+      background: var(--dark-surface);
+      color: var(--electric-blue);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-content">
+${content}
+  </div>
+</body>
+</html>`;
+    }
+
+    function generateMinimalWhiteHtml(content) {
+      return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${currentFilename}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --white-bg: #ffffff;
+      --warm-white: #fafafa;
+      --deep-purple: #6366f1;
+      --purple-light: #818cf8;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border-light: #e2e8f0;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: var(--white-bg);
+      color: var(--text-primary);
+      line-height: 2;
+      padding: 80px 40px;
+    }
+    .preview-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--warm-white);
+      border: 2px solid var(--border-light);
+      border-radius: 16px;
+      padding: 60px;
+    }
+    .preview-content h1 {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 24px;
+      margin-top: 40px;
+      letter-spacing: -2px;
+      color: var(--text-primary);
+    }
+    .preview-content h2 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      margin-top: 32px;
+      letter-spacing: -1px;
+      color: var(--deep-purple);
+    }
+    .preview-content h3 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      margin-top: 24px;
+      color: var(--text-primary);
+    }
+    .preview-content p {
+      font-size: 20px;
+      line-height: 2;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+    }
+    .preview-content ul, .preview-content ol {
+      font-size: 20px;
+      line-height: 2;
+      margin-bottom: 24px;
+      padding-left: 40px;
+    }
+    .preview-content li {
+      margin-bottom: 12px;
+    }
+    .preview-content code {
+      background: var(--border-light);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 18px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      color: var(--deep-purple);
+    }
+    .preview-content pre {
+      background: var(--text-primary);
+      color: var(--white-bg);
+      padding: 32px;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 32px 0;
+    }
+    .preview-content pre code {
+      background: transparent;
+      color: var(--white-bg);
+      padding: 0;
+    }
+    /* Pure Mermaid rendering - Reset inherited properties */
+    .preview-content svg {
+      word-wrap: normal;
+      overflow-wrap: normal;
+      word-break: normal;
+      line-height: normal;
+      width: auto;
+      height: auto;
+    }
+    /* Ensure foreignObject renders HTML content properly (including <br/> tags) */
+    .preview-content svg foreignObject {
+      overflow: visible;
+    }
+    .preview-content svg foreignObject div {
+      display: block;
+      text-align: center;
+      line-height: 1.0;
+      font-size: 14px;
+    }
+    .preview-content svg foreignObject div br {
+      display: block;
+      content: "";
+      margin: 0;
+      padding: 0;
+      height: 0;
+      line-height: 0;
+      font-size: 0;
+    }
+    .preview-content svg foreignObject p {
+      margin: 0;
+      padding: 0;
+      line-height: 1.0;
+    }
+    /* Ensure labels with line breaks are properly rendered */
+    .preview-content svg .nodeLabel,
+    .preview-content svg .edgeLabel {
+      line-height: 1.0;
+    }
+    .preview-content svg .nodeLabel p,
+    .preview-content svg .edgeLabel p {
+      margin: 0;
+      padding: 0;
+      line-height: 1.0;
+    }
+    .preview-content svg .nodeLabel br,
+    .preview-content svg .edgeLabel br {
+      display: block;
+      content: "";
+      margin: 0;
+      padding: 0;
+      height: 0;
+      line-height: 0;
+      font-size: 0;
+    }
+    /* Support for multi-line text in labels */
+    .preview-content svg .label {
+      line-height: 1.0;
+    }
+    .preview-content svg .label p {
+      margin: 0;
+      padding: 0;
+      line-height: 1.0;
+    }
+    .preview-content svg .label br {
+      display: block;
+      content: "";
+      margin: 0;
+      padding: 0;
+      height: 0;
+      line-height: 0;
+      font-size: 0;
+    }
+    .preview-content blockquote {
+      border-left: 4px solid var(--deep-purple);
+      padding-left: 24px;
+      margin: 24px 0;
+      color: var(--text-secondary);
+    }
+    .preview-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+    }
+    .preview-content th, .preview-content td {
+      padding: 12px 16px;
+      border: 1px solid var(--border-light);
+      text-align: left;
+    }
+    .preview-content th {
+      background: var(--warm-white);
+      color: var(--deep-purple);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-content">
+${content}
+  </div>
+</body>
+</html>`;
+    }
+
+    function generateGradientModernHtml(content) {
+      return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${currentFilename}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --gradient-start: #667eea;
+      --gradient-end: #764ba2;
+      --gradient-accent: #f093fb;
+      --gradient-pink: #f5576c;
+      --white: #ffffff;
+      --text-primary: #2d3748;
+      --text-secondary: #4a5568;
+      --glass-white: rgba(255, 255, 255, 0.95);
+      --glass-border: rgba(255, 255, 255, 0.3);
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      line-height: 1.8;
+      min-height: 100vh;
+      padding: 60px 40px;
+    }
+    .preview-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: var(--glass-white);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 16px 48px rgba(102, 126, 234, 0.2);
+    }
+    .preview-content h1 {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      margin-top: 32px;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .preview-content h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      margin-top: 24px;
+      color: var(--gradient-start);
+    }
+    .preview-content h3 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      margin-top: 20px;
+      color: var(--text-primary);
+    }
+    .preview-content p {
+      font-size: 18px;
+      line-height: 1.8;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    .preview-content ul, .preview-content ol {
+      margin-bottom: 20px;
+      padding-left: 32px;
+    }
+    .preview-content li {
+      margin-bottom: 12px;
+      line-height: 1.8;
+    }
+    .preview-content code {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--gradient-start);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      font-size: 16px;
+    }
+    .preview-content pre {
+      background: rgba(102, 126, 234, 0.1);
+      border: 1px solid var(--glass-border);
+      padding: 24px;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 24px 0;
+    }
+    .preview-content pre code {
+      background: transparent;
+      color: var(--text-primary);
+      padding: 0;
+    }
+    .preview-content svg {
+      max-width: 100%; height: auto; margin: 30px 0;
+      border: 1px solid #888888; padding: 20px; background: #ffffff; display: block;
+      word-wrap: normal; overflow-wrap: normal; word-break: normal; line-height: normal;
+    }
+    .preview-content svg foreignObject { overflow: visible; }
+    .preview-content svg foreignObject div {
+      display: block; text-align: center; line-height: 1.1; font-size: 14px;
+    }
+    .preview-content svg foreignObject div br {
+      display: block; content: ""; margin: 0; padding: 0; line-height: 0;
+    }
+    .preview-content svg foreignObject p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .nodeLabel,
+    .preview-content svg .edgeLabel { line-height: 1.1; }
+    .preview-content svg .nodeLabel p,
+    .preview-content svg .edgeLabel p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content svg .label { line-height: 1.1; }
+    .preview-content svg .label p { margin: 0; padding: 0; line-height: 1.1; }
+    .preview-content blockquote {
+      border-left: 4px solid var(--gradient-start);
+      padding-left: 20px;
+      margin: 24px 0;
+      color: var(--text-secondary);
+    }
+    .preview-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+    }
+    .preview-content th, .preview-content td {
+      padding: 12px 16px;
+      border: 1px solid var(--glass-border);
+      text-align: left;
+    }
+    .preview-content th {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--gradient-start);
+      font-weight: 700;
     }
   </style>
 </head>
