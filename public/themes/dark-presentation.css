@@ -321,6 +321,7 @@ body {
   word-wrap: break-word;
   overflow-wrap: anywhere;
   word-break: break-all;
+  cursor: pointer;
 }
 
 #preview a:hover {

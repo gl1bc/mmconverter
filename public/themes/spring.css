@@ -526,6 +526,7 @@ body {
   word-break: keep-all;
   display: inline-block;
   max-width: 100%;
+  cursor: pointer;
 }
 
 .preview-content a:hover {
