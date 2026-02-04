@@ -5,7 +5,7 @@ Markdown 파일의 Mermaid 다이어그램을 HTML로 변환하는 웹 애플리
 ## 주요 기능
 
 - 📄 **드래그 앤 드롭 업로드**: 간편한 파일 업로드 인터페이스
-- 🎨 **멀티 테마**: Default (Brutalism), Spring 테마 지원
+- 🎨 **멀티 테마**: Default (Brutalism), Spring, Dark Presentation, Minimal White, Gradient Modern 테마 지원
 - 🔄 **자동 변환**: 파일 업로드 시 즉시 미리보기
 - ⬇️ **HTML 내보내기**: 스타일이 포함된 HTML 다운로드
 - 📱 **반응형 디자인**: 데스크톱, 모바일 지원
@@ -30,7 +30,7 @@ npm start
 PORT=8080 npm start
 ```
 
-**테마 전환**: 브라우저에서 우측 상단의 테마 버튼으로 Default/Spring 간 전환
+**테마 전환**: 브라우저에서 우측 상단의 테마 버튼으로 5가지 테마 간 전환
 
 ### CLI 변환 도구
 
@@ -56,8 +56,11 @@ mmconvert/
 ├── public/                # 정적 리소스
 │   ├── index.html         # 통합 HTML (동적 테마 로딩)
 │   └── themes/
-│       ├── default.css    # Brutalism 테마
-│       └── spring.css     # Spring 테마
+│       ├── default.css         # Brutalism 테마
+│       ├── spring.css          # Spring 테마
+│       ├── dark-presentation.css  # Dark Mode Presentation 테마
+│       ├── minimal-white.css      # Minimal White Presentation 테마
+│       └── gradient-modern.css    # Gradient Modern Presentation 테마
 ├── package.json           # 의존성 및 스크립트
 ├── Dockerfile             # Docker 이미지 빌드 설정
 ├── .dockerignore          # Docker 빌드 제외 파일
@@ -71,17 +74,35 @@ mmconvert/
 
 ## 테마
 
-### Default (Brutalism)
+### 1. Default (Brutalism)
 - Courier New 폰트
 - 흑백 컬러 스킴
 - 굵은 테두리, 대문자 텍스트
 - 미니멀리스트 디자인
 
-### Spring
+### 2. Spring
 - 시스템 폰트
 - 녹색 컬러 팔레트 (#2f845e)
 - 둥근 모서리, 부드러운 그림자
 - 모던하고 깔끔한 디자인
+
+### 3. Dark Presentation
+- Deep Navy 배경 (#0a0e27)
+- Electric Blue 강조색 (#00d4ff)
+- Glassmorphism 효과
+- 프레젠테이션 최적화 (2026 트렌드)
+
+### 4. Minimal White
+- Pure White 배경
+- Deep Purple 강조색 (#6366f1)
+- 초대형 타이포그래피 (64-72pt)
+- Clarity-first 디자인 (AAA contrast)
+
+### 5. Gradient Modern
+- 그라데이션 배경 (Purple → Pink)
+- Glassmorphism 카드
+- Depth effects & 애니메이션
+- 모던하고 역동적인 디자인
 
 ## API 엔드포인트
 

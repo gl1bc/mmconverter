@@ -1,0 +1,531 @@
+/* Minimal White Presentation Theme */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --white-bg: #ffffff;
+  --warm-white: #fafafa;
+  --deep-purple: #6366f1;
+  --purple-light: #818cf8;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-light: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  background: var(--white-bg);
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+/* Floating Upload Widget - Theme Specific */
+.floating-upload {
+  border: 2px solid var(--deep-purple) !important;
+  background: var(--white-bg) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.floating-upload:hover {
+  background: var(--warm-white) !important;
+  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+.floating-upload.dragover {
+  background: var(--deep-purple) !important;
+  border-color: var(--deep-purple) !important;
+}
+
+.floating-upload.dragover .floating-upload-text,
+.floating-upload.dragover .floating-upload-icon {
+  color: var(--white-bg);
+}
+
+.floating-upload-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  color: var(--deep-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Theme Toggle */
+.theme-selector {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid #6366f1;
+}
+
+.theme-selector label {
+  color: #333 !important;
+}
+
+.theme-dropdown {
+  color: #333;
+}
+
+/* Main Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  padding-top: 80px;
+}
+
+/* Header - Bold Typography */
+.header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+  letter-spacing: -3px;
+  line-height: 1.1;
+}
+
+.header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-top: 16px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Upload Section - Clarity First */
+.converter {
+  background: var(--white-bg);
+  border: 2px solid var(--border-light);
+  border-radius: 24px;
+  padding: 80px 60px;
+  margin-bottom: 60px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.converter:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 40px;
+  color: var(--text-primary);
+  letter-spacing: -2px;
+}
+
+/* File Upload Area */
+.file-upload {
+  margin-bottom: 24px;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-area {
+  border: 3px dashed var(--border-light);
+  background: var(--warm-white);
+  border-radius: 20px;
+  padding: 100px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.upload-area:hover {
+  border-color: var(--deep-purple);
+  background: rgba(99, 102, 241, 0.03);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.upload-area.dragover {
+  border-color: var(--purple-light);
+  background: rgba(99, 102, 241, 0.08);
+  border-width: 4px;
+}
+
+.upload-icon {
+  font-size: 4rem;
+  margin-bottom: 24px;
+  color: var(--deep-purple);
+}
+
+.upload-text {
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.upload-text strong {
+  font-size: 1.2rem;
+  font-weight: 800;
+  display: block;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+
+#fileInfo {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--warm-white);
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
+  color: var(--deep-purple);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.message {
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Preview Section - Generous Spacing */
+.preview {
+  background: var(--white-bg);
+  border: 2px solid var(--border-light);
+  border-radius: 24px;
+  padding: 80px 60px;
+  margin-bottom: 60px;
+  box-shadow: var(--shadow-md);
+}
+
+#preview {
+  background: var(--warm-white);
+  border: 2px solid var(--border-light);
+  border-radius: 16px;
+  padding: 60px;
+  min-height: 400px;
+  color: var(--text-primary);
+  font-size: 18px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.preview-placeholder {
+  text-align: center;
+  padding: 100px 40px;
+  color: var(--text-secondary);
+}
+
+.preview-placeholder-icon {
+  font-size: 4rem;
+  margin-bottom: 32px;
+  opacity: 0.4;
+}
+
+.preview-placeholder p {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Preview Content Styling */
+#preview h1 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  margin-bottom: 24px;
+  margin-top: 40px;
+  letter-spacing: -2px;
+  color: var(--text-primary);
+}
+
+#preview h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  margin-top: 32px;
+  letter-spacing: -1px;
+  color: var(--deep-purple);
+}
+
+#preview h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  margin-top: 24px;
+  color: var(--text-primary);
+}
+
+#preview p {
+  font-size: 16px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+#preview ul,
+#preview ol {
+  margin-bottom: 20px;
+  padding-left: 32px;
+}
+
+#preview li {
+  font-size: 1rem;
+  margin-bottom: 2px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+#preview code {
+  background: rgba(0, 212, 255, 0.1);
+  color: var(--electric-blue);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  font-size: 12px;
+  color: var(--deep-purple);
+}
+
+#preview pre {
+  background: var(--text-primary);
+  color: var(--white-bg);
+  padding: 32px;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin: 32px 0;
+}
+
+#preview pre code {
+  background: transparent;
+  color: var(--white-bg);
+  padding: 0;
+}
+
+#preview a {
+  color: var(--deep-purple);
+  text-decoration: underline;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+#preview a:hover {
+  color: var(--purple-light);
+}
+
+/* Mermaid Diagram Styling - Pure Rendering (No SVG CSS) */
+/* Reset SVG to prevent inheritance from #preview container */
+#preview svg {
+  /* Reset text properties that might interfere */
+  word-wrap: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  line-height: normal;
+  /* Let SVG size itself naturally */
+  width: auto;
+  height: auto;
+  /* No additional styling */
+}
+
+/* Ensure foreignObject renders HTML content properly (including <br/> tags) */
+#preview svg foreignObject {
+  overflow: visible;
+}
+
+#preview svg foreignObject div {
+  display: block;
+  text-align: center;
+  line-height: 1.0;
+  font-size: 14px;
+}
+
+#preview svg foreignObject div br {
+  display: block;
+  content: "";
+  margin: 0;
+  padding: 0;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+}
+
+#preview svg foreignObject p {
+  margin: 0;
+  padding: 0;
+  line-height: 1.0;
+}
+
+/* Ensure labels with line breaks are properly rendered */
+#preview svg .nodeLabel,
+#preview svg .edgeLabel {
+  line-height: 1.0;
+}
+
+#preview svg .nodeLabel p,
+#preview svg .edgeLabel p {
+  margin: 0;
+  padding: 0;
+  line-height: 1.0;
+}
+
+#preview svg .nodeLabel br,
+#preview svg .edgeLabel br {
+  display: block;
+  content: "";
+  margin: 0;
+  padding: 0;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+}
+
+/* Support for multi-line text in labels */
+#preview svg .label {
+  line-height: 1.0;
+}
+
+#preview svg .label p {
+  margin: 0;
+  padding: 0;
+  line-height: 1.0;
+}
+
+#preview svg .label br {
+  display: block;
+  content: "";
+  margin: 0;
+  padding: 0;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+}
+
+/* Download Button - Bold CTA */
+.download-html-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: var(--deep-purple);
+  color: white;
+  padding: 12px 20px;
+  border: 2px solid var(--deep-purple);
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.download-html-btn:hover {
+  background: var(--purple-light);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+.download-html-btn:active {
+  transform: translateY(-1px);
+}
+
+.download-html-btn:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Scrollbar - Minimal */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--warm-white);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Accessibility - AAA Contrast */
+@media (prefers-contrast: high) {
+  :root {
+    --text-primary: #000000;
+    --deep-purple: #4338ca;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 60px 24px;
+  }
+
+  h1 {
+    font-size: 48px;
+    letter-spacing: -2px;
+  }
+
+  .subtitle {
+    font-size: 20px;
+  }
+
+  #converter h2,
+  #preview h2 {
+    font-size: 36px;
+  }
+
+  #converter,
+  #preview {
+    padding: 60px 32px;
+  }
+
+  #dropZone {
+    padding: 80px 24px;
+  }
+
+  .upload-text {
+    font-size: 24px;
+  }
+
+  #downloadBtn {
+    bottom: 24px;
+    right: 24px;
+    padding: 16px 32px;
+    font-size: 16px;
+  }
+}

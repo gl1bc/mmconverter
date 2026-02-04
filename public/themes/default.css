@@ -278,6 +278,12 @@ body {
   border-top: 4px solid #000000;
 }
 
+#preview {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
 .preview-placeholder {
   text-align: center;
   padding: 80px 20px;
@@ -331,6 +337,9 @@ body {
   padding: 30px;
   background: #ffffff;
   text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .preview-content h1,
@@ -356,6 +365,9 @@ body {
   margin: 20px 0;
   line-height: 1.6;
   text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .preview-content ul,
@@ -368,6 +380,9 @@ body {
 .preview-content li {
   margin: 10px 0;
   font-weight: 500;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .preview-content table {
@@ -384,6 +399,9 @@ body {
   padding: 15px;
   text-align: left;
   font-family: 'Courier New', monospace;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .preview-content th {
@@ -434,6 +452,9 @@ body {
   color: #000000;
   text-decoration: underline;
   font-weight: 900;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .preview-content a:hover {
@@ -457,4 +478,59 @@ body {
   background: #ffffff;
   overflow: visible !important;
   display: block;
+  /* Reset inherited text properties to prevent interference */
+  word-wrap: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  line-height: normal;
+}
+
+/* Ensure foreignObject renders HTML content properly (including <br/> tags) */
+.preview-content svg foreignObject {
+  overflow: visible;
+}
+
+.preview-content svg foreignObject div {
+  display: block;
+  text-align: center;
+  line-height: 1.1;
+  font-size: 14px;
+}
+
+.preview-content svg foreignObject div br {
+  display: block;
+  content: "";
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+.preview-content svg foreignObject p {
+  margin: 0;
+  padding: 0;
+  line-height: 1.1;
+}
+
+/* Ensure labels with line breaks are properly rendered */
+.preview-content svg .nodeLabel,
+.preview-content svg .edgeLabel {
+  line-height: 1.1;
+}
+
+.preview-content svg .nodeLabel p,
+.preview-content svg .edgeLabel p {
+  margin: 0;
+  padding: 0;
+  line-height: 1.1;
+}
+
+/* Support for multi-line text in labels */
+.preview-content svg .label {
+  line-height: 1.1;
+}
+
+.preview-content svg .label p {
+  margin: 0;
+  padding: 0;
+  line-height: 1.1;
 }

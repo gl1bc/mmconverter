@@ -52,7 +52,21 @@ async function convertMarkdownToHtml(markdown) {
     .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeMermaid, {
-      strategy: 'inline-svg'
+      strategy: 'inline-svg',
+      mermaidConfig: {
+        fontFamily: 'arial,sans-serif',
+        flowchart: {
+          padding: 15,
+          nodeSpacing: 50,
+          rankSpacing: 50,
+          curve: 'basis',
+          useMaxWidth: true,
+          htmlLabels: true
+        },
+        themeVariables: {
+          fontSize: '16px'
+        }
+      }
     })
     .use(rehypeStringify);
 
